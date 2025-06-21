@@ -17,34 +17,38 @@ extern IcsHardSerialClass ics_R;
 //  列挙型
 //------------------------------------------------------------------------------------
 
-enum UartLine { // サーボ系統の列挙型(L,R,C)
-  L,            // Left
-  R,            // Right
-  C             // Center
+enum UartLine
+{    // サーボ系統の列挙型(L,R,C)
+  L, // Left
+  R, // Right
+  C  // Center
 };
 
-enum ServoType { // サーボプロトコルのタイプ
-  NOSERVO = 0,   // サーボなし
-  PWM_S = 1,     // Single PWM (WIP)
-  PCA9685 = 11,  // I2C_PCA9685 to PWM (WIP)
-  FTBRSX = 21,   // FUTABA_RSxTTL (WIP)
-  DXL1 = 31,     // DYNAMIXEL 1.0 (WIP)
-  DXL2 = 32,     // DYNAMIXEL 2.0 (WIP)
-  KOICS3 = 43,   // KONDO_ICS 3.5 / 3.6
-  KOPMX = 44,    // KONDO_PMX (WIP)
-  JRXBUS = 51,   // JRPROPO_XBUS (WIP)
-  FTCSTS = 61,   // FEETECH_STS (WIP)
-  FTCSCS = 62    // FEETECH_SCS (WIP)
+enum ServoType
+{               // サーボプロトコルのタイプ
+  NOSERVO = 0,  // サーボなし
+  PWM_S = 1,    // Single PWM (WIP)
+  PCA9685 = 11, // I2C_PCA9685 to PWM (WIP)
+  FTBRSX = 21,  // FUTABA_RSxTTL (WIP)
+  DXL1 = 31,    // DYNAMIXEL 1.0 (WIP)
+  DXL2 = 32,    // DYNAMIXEL 2.0 (WIP)
+  KOICS3 = 43,  // KONDO_ICS 3.5 / 3.6
+  KOPMX = 44,   // KONDO_PMX (WIP)
+  JRXBUS = 51,  // JRPROPO_XBUS (WIP)
+  FTCSTS = 61,  // FEETECH_STS (WIP)
+  FTCSCS = 62   // FEETECH_SCS (WIP)
 };
 
-enum ImuAhrsType { // 6軸9軸センサ種の列挙型(NO_IMU, MPU6050_IMU, MPU9250_IMU, BNO055_AHRS)
+enum ImuAhrsType
+{                  // 6軸9軸センサ種の列挙型(NO_IMU, MPU6050_IMU, MPU9250_IMU, BNO055_AHRS)
   NO_IMU = 0,      // IMU/AHRS なし.
   MPU6050_IMU = 1, // MPU6050
   MPU9250_IMU = 2, // MPU9250(未設定)
   BNO055_AHRS = 3  // BNO055
 };
 
-enum PadType {   // リモコン種の列挙型(NONE, PC, MERIMOTE, BLUERETRO, SBDBT, KRR5FH)
+enum PadType
+{                // リモコン種の列挙型(NONE, PC, MERIMOTE, BLUERETRO, SBDBT, KRR5FH)
   NONE = 0,      // リモコンなし
   PC = 0,        // PCからのPD入力情報を使用
   MERIMOTE = 1,  // MERIMOTE(未導入)
@@ -55,7 +59,8 @@ enum PadType {   // リモコン種の列挙型(NONE, PC, MERIMOTE, BLUERETRO, S
   WIIMOTE_C = 6, // WIIMOTE+Classic
 };
 
-enum PadButton {  // リモコンボタンの列挙型
+enum PadButton
+{                 // リモコンボタンの列挙型
   PAD_SELECT = 1, // Select
   PAD_HOME = 2,   // HOME
   PAD_L3 = 2,     // L3
@@ -75,10 +80,11 @@ enum PadButton {  // リモコンボタンの列挙型
   PAD_bL = 32768  // ◻︎ 左
 };
 
-enum BinHexDec { // 数値表示タイプの列挙型(Bin, Hex, Dec)
-  Bin = 0,       // BIN
-  Hex = 1,       // HEX
-  Dec = 2,       // DEC
+enum BinHexDec
+{          // 数値表示タイプの列挙型(Bin, Hex, Dec)
+  Bin = 0, // BIN
+  Hex = 1, // HEX
+  Dec = 2, // DEC
 };
 
 //------------------------------------------------------------------------------------
@@ -99,7 +105,8 @@ TaskHandle_t thp[4];                   // マルチスレッドのタスクハ�
 //------------------------------------------------------------------------------------
 
 // Meridim配列用の共用体の設定
-typedef union {
+typedef union
+{
   short sval[MRDM_LEN + 4];           // short型で90個の配列データを持つ
   unsigned short usval[MRDM_LEN + 2]; // 上記のunsigned short型
   uint8_t bval[+4];                   // byte型で180個の配列データを持つ
@@ -110,7 +117,8 @@ Meridim90Union r_udp_meridim;       // Meridim配列データ受信用
 Meridim90Union s_udp_meridim_dummy; // SPI送信ダミー用
 
 // フラグ用変数
-struct MrdFlags {
+struct MrdFlags
+{
   bool imuahrs_available = true;        // メインセンサ値を読み取る間, サブスレッドによる書き込みを待機
   bool udp_board_passive = false;       // UDP通信の周期制御がボード主導(false) か, PC主導(true)か.
   bool count_frame_reset = false;       // フレーム管理時計をリセットする
@@ -129,6 +137,10 @@ struct MrdFlags {
   bool udp_rcvd = false;                // UDPのデータ受信判定
   bool udp_busy = false;                // UDPスレッドでの受信中フラグ(送信抑制)
 
+  int vrshateki_trigger = false;                              // VR射的でのセンターリセットフラグ（30001）
+  bool vrshateki_centering_count = VRSHATEKI_CENTERING_TIMER; // VR射的でのセンタリングカウント
+  bool torq_switch_disp = false;                              // VR射的でのセンタリングカウント
+
   bool udp_receive_mode = MODE_UDP_RECEIVE; // PCからのデータ受信実施(0:OFF, 1:ON, 通常は1)
   bool udp_send_mode = MODE_UDP_SEND;       // PCへのデータ送信実施(0:OFF, 1:ON, 通常は1)
   bool meridim_rcvd = false;                // Meridimが正しく受信できたか.
@@ -136,14 +148,16 @@ struct MrdFlags {
 MrdFlags flg;
 
 // シーケンス番号理用の変数
-struct MrdSq {
+struct MrdSq
+{
   int s_increment = 0; // フレーム毎に0-59999をカウントし, 送信
   int r_expect = 0;    // フレーム毎に0-59999をカウントし, 受信値と比較
 };
 MrdSq mrdsq;
 
 // タイマー管理用の変数
-struct MrdTimer {
+struct MrdTimer
+{
   long frame_ms = FRAME_DURATION; // 1フレームあたりの単位時間(ms)
   int count_loop = 0;             // サイン計算用の循環カウンタ
   int count_loop_dlt = 2;         // サイン計算用の循環カウンタを1フレームにいくつ進めるか
@@ -155,7 +169,8 @@ struct MrdTimer {
 MrdTimer tmr;
 
 // エラーカウント用
-struct MrdErr {
+struct MrdErr
+{
   int esp_pc = 0;   // PCの受信エラー(ESP32からのUDP)
   int pc_esp = 0;   // ESP32の受信エラー(PCからのUDP)
   int esp_tsy = 0;  // Teensyの受信エラー(ESP32からのSPI)
@@ -180,7 +195,8 @@ PadUnion pad_array = {0}; // pad値の格納用配列
 PadUnion pad_i2c = {0};   // pad値のi2c送受信用配列
 
 // リモコンのアナログ入力データ
-struct PadValue {
+struct PadValue
+{
   unsigned short stick_R = 0;
   int stick_R_x = 0;
   int stick_R_y = 0;
@@ -194,7 +210,8 @@ struct PadValue {
 PadValue pad_analog;
 
 // 6軸or9軸センサーの値
-struct AhrsValue {
+struct AhrsValue
+{
   Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire); // BNO055のインスタンス
 
   MPU6050 mpu6050;        // MPU6050のインスタンス
@@ -223,7 +240,8 @@ struct AhrsValue {
 AhrsValue ahrs;
 
 // サーボ用変数
-struct ServoParam {
+struct ServoParam
+{
   // サーボの最大接続 (サーボ送受信のループ処理数)
   int num_max;
 
@@ -264,7 +282,8 @@ struct ServoParam {
 ServoParam sv;
 
 // モニタリング設定
-struct MrdMonitor {
+struct MrdMonitor
+{
   bool flow = MONITOR_FLOW;           // フローを表示
   bool all_err = MONITOR_ERR_ALL;     // 全経路の受信エラー率を表示
   bool servo_err = MONITOR_ERR_SERVO; // サーボエラーを表示
@@ -283,7 +302,8 @@ MrdMsgHandler mrd_disp(Serial);
 ///@brief Generate expected sequence number from input.
 ///@param a_previous_num Previous sequence number.
 ///@return Expected sequence number. (0 to 59,999)
-uint16_t mrd_seq_predict_num(uint16_t a_previous_num) {
+uint16_t mrd_seq_predict_num(uint16_t a_previous_num)
+{
   uint16_t x_tmp = a_previous_num + 1;
   if (x_tmp > 59999) // Reset counter
   {
